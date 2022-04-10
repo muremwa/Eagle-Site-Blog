@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 
 
 // single blog entry
@@ -9,8 +10,16 @@ function BlogEntry (props) {
         backgroundImage: `url(${featureImageUrl})`
     };
 
+    const entryDiv = useRef(null);
+
+    useEffect(() => {
+        entryDiv.current.classList.add('fadeInUp');
+        entryDiv.current.classList.add('ftco-animated');
+        console.log(entryDiv.current)
+    });
+
     return (
-        <div className="col-md-4 ftco-animate">
+        <div className="col-md-4 ftco-animate" ref={entryDiv}>
             <div className="blog-entry">
                 <NavLink to={linkToBlog} style={featureImgLinkStyle} className="block-20"/>
 
@@ -31,24 +40,29 @@ function BlogEntry (props) {
 
 // all blogs/blog index
 export default function Home () {
-    const blogs = [
-        {
-            id: 1,
-            featureImageUrl: 'http://127.0.0.1:8000/media/blog/default_images/default_feature.png',
-            date: 'October 20, 2021',
-            author: {
-                name: 'Muremwa',
-                bio: '',
-                image: 'http://127.0.0.1:8000/blog/posts/temper-tantrum-kimberly-smith-7/',
-                id: 20
-            },
-            commentCount: 10,
-            title: 'This is a test blog'
-        }
-    ].map((blog) => <BlogEntry key={blog.id} {...blog}/>);
+    const [blogs, blogsUpdate] = useState(
+        [
+            {
+                featureImageUrl: 'http://127.0.0.1:8000/media/blog/default_images/default_feature.png',
+                date: 'October 20, 2021',
+                author: {
+                    name: 'Muremwa',
+                    bio: '',
+                    image: 'http://127.0.0.1:8000/blog/posts/temper-tantrum-kimberly-smith-7/',
+                    id: 20
+                },
+                commentCount: 10,
+                title: 'This is a test blog'
+            }
+        ]
+    );
+
+    const mappedBlogs = blogs.map((blog, key) => <BlogEntry key={key} id={key} {...blog}/>);
+
+
     return (
         <div className="row">
-            {blogs}
+            {mappedBlogs}
         </div>
     )
 }
