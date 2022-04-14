@@ -1,5 +1,5 @@
 import { Routes, Route, BrowserRouter, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import Home from './pages/home/Home';
 import Error404 from './pages/home/Error404';
@@ -11,9 +11,14 @@ import './App.css';
 function Title () {
     const [defaultTitle, titleChanger] = useState("Read my blog");
     const location = useLocation();
+    const top = useRef(null);
+
+    useEffect(() => {
+        top.current.scrollIntoView();
+    }, [location]);
 
     return (
-        <div className="row justify-content-center mb-5 pb-5">
+        <div className="row justify-content-center mb-5 pb-5" ref={top}>
             <div className="col-md-7 text-center heading-section ftco-animate">
                 <span><a href="name.com">Blog</a></span>
                 <h2>{defaultTitle}</h2>
