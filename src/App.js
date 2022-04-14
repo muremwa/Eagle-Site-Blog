@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter, useLocation } from 'react-router-dom';
+import { Routes, Route, BrowserRouter, useLocation, NavLink } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 
 import Home from './pages/home/Home';
@@ -20,7 +20,7 @@ function Title () {
     return (
         <div className="row justify-content-center mb-5 pb-5" ref={top}>
             <div className="col-md-7 text-center heading-section ftco-animate">
-                <span><a href="name.com">Blog</a></span>
+                <span><NavLink to='/'>Blog</NavLink></span>
                 <h2>{defaultTitle}</h2>
                 <span>All posts</span>
             </div>
