@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 
 // single blog entry
 function BlogEntry (props) {
-    const { id, featureImageUrl, date, author, commentCount, title } = props;
-    const linkToBlog = `posts/${title}-${id}`;
+    const { featureImageUrl, date, author, commentCount, title, slug } = props;
+    const linkToBlog = `posts/${slug}/`;
     const featureImgLinkStyle = {
         backgroundImage: `url(${featureImageUrl})`
     };
@@ -15,7 +15,6 @@ function BlogEntry (props) {
     useEffect(() => {
         entryDiv.current.classList.add('fadeInUp');
         entryDiv.current.classList.add('ftco-animated');
-        console.log(entryDiv.current)
     });
 
     return (
@@ -52,8 +51,9 @@ export default function Home () {
                     id: 20
                 },
                 commentCount: 10,
-                title: 'This is a test blog'
-            }
+                title: 'This is a test blog',
+                slug: 'muremwa-this-is-a-test-blog-1',
+            },
         ]
     );
 
