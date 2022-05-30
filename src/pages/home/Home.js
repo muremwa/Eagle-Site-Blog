@@ -59,6 +59,10 @@ export default function Home () {
 
     const mappedBlogs = blogs.map((blog, key) => <BlogEntry key={key} id={key} {...blog}/>);
 
+    useEffect(() => {
+        return document.title = 'Muremwa | Blog - All Posts';
+    });
+
 
     return (
         <div className="row">
