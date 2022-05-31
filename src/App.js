@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import Home from './pages/home/Home';
 import Error404 from './pages/home/Error404';
-import Nuke from './pages/posts/Post';
+import Post from './pages/posts/Post';
 
 import './App.css';
 
@@ -34,7 +34,7 @@ function App() {
                 <Title />
                 <Routes>
                     <Route path='/' element={<Home />} />
-                    <Route path='/posts/' element={<Nuke />}/>
+                    <Route path='/posts/:blogSlug/' element={<Post />}/>
                     <Route path='*' element={<Error404/>} />
                 </Routes>
         </BrowserRouter>
