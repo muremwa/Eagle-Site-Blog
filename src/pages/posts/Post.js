@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
 
 import '../../style/post.css';
+import {CommentForm, Comments} from "./Comments";
 
 
 const Tag = (props) => <NavLink to={`/?tag=${props.slug}`} className="tag-cloud-link">{props.name}</NavLink>;
@@ -14,8 +15,8 @@ export default function Post () {
         date: 'October 20, 2021',
         author: {
             name: 'Muremwa',
-            bio: '',
-            image: 'http://127.0.0.1:8000/blog/posts/temper-tantrum-kimberly-smith-7/',
+            bio: 'Prone to error.',
+            image: 'http://127.0.0.1:8000/media/blog/default_images/default_author_avatar.png',
             id: 20
         },
         commentCount: 10,
@@ -38,6 +39,33 @@ export default function Post () {
                 name: 'medical theory',
                 slug: 'medical-theory'
             }
+        ],
+        comments: [
+            {
+                id: 1,
+                name: 'Kate Bush',
+                message: 'Running up that hill. \n (A deal with God)',
+                date: 'October 20, 2021 at 11:45AM'
+            },
+            {
+                id: 2,
+                name: 'Lauryn Hill',
+                message: 'Killing me softly with his song',
+                date: 'October 30, 2021 at 11:45PM'
+            },
+            {
+                id: 3,
+                name: 'Celine Dion',
+                message: 'It\'s coming back to me now',
+                date: 'October 20, 2021 at 11:45AM'
+            },
+            {
+                id: 4,
+                name: 'Kendrick Lamar',
+                message: 'Sing about me, I\'m dying of thirst',
+                date: 'October 20, 2021 at 11:45AM'
+            },
+
         ],
     });
 
@@ -90,6 +118,23 @@ If you still have some questions do not hesitate to ask us. Open an issue or [vi
 
                         {/* Tags */}
                         <div className="tagcloud">{tags}</div>
+
+                        {/* About author */}
+                        <div className="about-author d-flex pt-5">
+                            <div className="bio align-self-md-center mr-4">
+                                <img src={post.author.image} alt="Image placeholder" className="img-fluid mb-4" />
+                            </div>
+                            <div className="desc align-self-md-center">
+                                <h3>About The Author</h3>
+                                <p>{post.author.bio}</p>
+                            </div>
+                        </div>
+
+                        {/* Comments */}
+                        <Comments comments={post.comments} title={post.title} />
+
+                        {/* Commenting form */}
+                        <CommentForm/>
 
                     </div>
                 </div>
