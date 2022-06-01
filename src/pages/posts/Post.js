@@ -1,107 +1,22 @@
 import {useEffect, useState} from "react";
-import { NavLink } from "react-router-dom";
+import {NavLink, useParams} from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
 
 import '../../style/post.css';
 import {CommentForm, Comments} from "./Comments";
+import store from "../../store/BlogStore";
+import Error404 from "../home/Error404";
+import {fetchBlog} from "../../actions/blogActions";
 
 
-const Tag = (props) => <NavLink to={`/?tag=${props.slug}`} className="tag-cloud-link">{props.name}</NavLink>;
+const Tag = (props) => {
+    return <NavLink to={`/?tag=${props.slug}`} className="tag-cloud-link">{props.name}</NavLink>
+};
 
 
-export default function Post () {
-    const [post, postUpdater] = useState({
-        featureImageUrl: 'http://127.0.0.1:8000/media/blog/default_images/default_feature.png',
-        date: 'October 20, 2021',
-        author: {
-            name: 'Muremwa',
-            bio: 'Prone to error.',
-            image: 'http://127.0.0.1:8000/media/blog/default_images/default_author_avatar.png',
-            id: 20
-        },
-        commentCount: 10,
-        title: 'This is a test blog',
-        slug: 'muremwa-this-is-a-test-blog-1',
-        tags: [
-            {
-                name: 'fiction',
-                slug: 'fiction',
-            },
-            {
-                name: 'science',
-                slug: 'science'
-            },
-            {
-                name: 'politics',
-                slug: 'politics'
-            },
-            {
-                name: 'medical theory',
-                slug: 'medical-theory'
-            }
-        ],
-        comments: [
-            {
-                id: 1,
-                name: 'Kate Bush',
-                message: 'Running up that hill. \n (A deal with God)',
-                date: 'October 20, 2021 at 11:45AM'
-            },
-            {
-                id: 2,
-                name: 'Lauryn Hill',
-                message: 'Killing me softly with his song',
-                date: 'October 30, 2021 at 11:45PM'
-            },
-            {
-                id: 3,
-                name: 'Celine Dion',
-                message: 'It\'s coming back to me now',
-                date: 'October 20, 2021 at 11:45AM'
-            },
-            {
-                id: 4,
-                name: 'Kendrick Lamar',
-                message: 'Sing about me, I\'m dying of thirst',
-                date: 'October 20, 2021 at 11:45AM'
-            },
-
-        ],
-    });
-
-    const x = `
-> What a __time__ to be alive
-# React Bootstrap with Material Design
-MDBootstrap for React
-
-## Getting Started
-To test, contribute or just see what we did follow few easy steps:
-- clone the repository
-- cd to the directory with the repository
-- run \`yarn install\` (or \`npm install\` if you don't use yarn)
-- run the app using \`yarn start\` (or \`npm start\`)
-- to build project use \`yarn run build\` (od \`npm run build\`)
-- \`yarn run remove-demo\` (or \`npm run remove-demo\`) removes demo app pages
-- enjoy!
-
-## Bugs
-If you want to report a bug or submit your idea feel fre to open an issue
-
-Before you report a bug, please take your time to find if an issue hasn't been reported yet
-
-![sd](http://127.0.0.1:8000/media/blog/feature_images/91069_2.jpg)
-
-We're also open to pull requests
-
-## Something Missing?
-If you still have some questions do not hesitate to ask us. Open an issue or [visit our Slack](https://mdbbetatest.slack.com)
-    `;
-
+function Post ({ post }) {
     const tags = post.tags.map((_tag, i) => <Tag key={i} {..._tag} />);
-
-    useEffect(() => {
-        document.title = `Muremwa | Post - ${post.title}`;
-    });
+    document.title = `Muremwa | Post - ${post.title}`;
 
     return (
         <section id="post" className="ftco-section">
@@ -113,7 +28,7 @@ If you still have some questions do not hesitate to ask us. Open an issue or [vi
 
                         {/* content */}
                         <div className="post-content" data-post-content="{{ post.content }}">
-                            <ReactMarkdown children={x} />
+                            <ReactMarkdown children={post.content} />
                         </div>
 
                         {/* Tags */}
@@ -141,4 +56,38 @@ If you still have some questions do not hesitate to ask us. Open an issue or [vi
             </div>
         </section>
     )
+}
+
+export default function PostMain () {
+    const { blogSlug } = useParams();
+    const [ post, postUpdater ] = useState(store.getPost(blogSlug));
+    const [fetch, fetchUpdater] = useState(true);
+    const [postNotFound, postNotFoundUpdate] = useState(false);
+
+    const loadNewPost = () => {
+        postUpdater(store.getPost(blogSlug));
+        postNotFoundUpdate(!Boolean(post));
+    };
+
+    useEffect(() => {
+        store.on(`change_to_${blogSlug}`, loadNewPost);
+
+        return () => store.removeListener(`change_to_${blogSlug}`, loadNewPost);
+    });
+
+    // if post doesn't exist and fetch hasn't happened
+    if (!post && fetch) {
+        fetchBlog(blogSlug);
+        fetchUpdater(false);
+    }
+
+    if (post) {
+        return <Post post={post} />
+    } else {
+        if (postNotFound) {
+            return <Error404 item={'blog post'}/>
+        } else {
+            return <h2 className="text-center">Loading post...</h2>
+        }
+    }
 }
