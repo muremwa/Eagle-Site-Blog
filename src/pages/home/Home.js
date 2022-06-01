@@ -1,5 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import store from "../../store/BlogStore";
+import {fetchAllPosts} from "../../actions/blogActions";
 
 
 // single blog entry
@@ -37,32 +39,52 @@ function BlogEntry (props) {
 }
 
 
+function NoPosts (props) {
+    const { loading } = props;
+    return (
+        <div className="col-md-12 text-center heading-section ftco-animate">
+            <span>coming soon</span>
+            <h2>
+                {loading? 'loading posts...': 'No posts for now'}
+                {/*{% if author %}by {{author}}{% endif %}*/}
+                {/*{% if tag %}tagged {{tag}}{% endif %}*/}
+                {/*{% if on %}dated {{on}}{% endif %}*/}
+                {/*{% if before %}posted before {{before}}{% endif %}*/}
+                {/*{% if after %}posted after {{after}}{% endif %}*/}
+            </h2>
+        </div>
+    )
+}
+
+
 // all blogs/blog index
 export default function Home () {
     document.title = 'Muremwa | Blog - All Posts';
-    const [blogs, blogsUpdate] = useState(
-        [
-            {
-                featureImageUrl: 'http://127.0.0.1:8000/media/blog/default_images/default_feature.png',
-                date: 'October 20, 2021',
-                author: {
-                    name: 'Muremwa',
-                    bio: '',
-                    image: 'http://127.0.0.1:8000/blog/posts/temper-tantrum-kimberly-smith-7/',
-                    id: 20
-                },
-                commentCount: 10,
-                title: 'This is a test blog',
-                slug: 'muremwa-this-is-a-test-blog-1',
-            },
-        ]
-    );
+    const [blogs, blogsUpdate] = useState(store.getAllPosts());
+    const [fetchBlogs, updateFetch] = useState(true);
+    const [noPosts, noPostsUpdate] = useState(false);
+
+    if (fetchBlogs) {
+        fetchAllPosts();
+        updateFetch(false);
+    }
+
+    const updatePosts = () => {
+        blogsUpdate(store.getAllPosts());
+        noPostsUpdate(!Boolean(blogs.length));
+    };
+
+    useEffect(() => {
+        store.on('change_to_posts', updatePosts);
+
+        return () => store.removeListener('change_to_posts', updatePosts);
+    });
 
     const mappedBlogs = blogs.map((blog, key) => <BlogEntry key={key} id={key} {...blog}/>);
 
     return (
         <div className="row">
-            {mappedBlogs}
+            {mappedBlogs.length? mappedBlogs: <NoPosts loading={!noPosts}/>}
         </div>
     )
 }
