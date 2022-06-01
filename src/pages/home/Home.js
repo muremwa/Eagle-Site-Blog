@@ -39,6 +39,7 @@ function BlogEntry (props) {
 
 // all blogs/blog index
 export default function Home () {
+    document.title = 'Muremwa | Blog - All Posts';
     const [blogs, blogsUpdate] = useState(
         [
             {
@@ -58,11 +59,6 @@ export default function Home () {
     );
 
     const mappedBlogs = blogs.map((blog, key) => <BlogEntry key={key} id={key} {...blog}/>);
-
-    useEffect(() => {
-        return document.title = 'Muremwa | Blog - All Posts';
-    });
-
 
     return (
         <div className="row">
