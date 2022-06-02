@@ -10,7 +10,7 @@ import {fetchBlog} from "../../actions/blogActions";
 
 
 const Tag = (props) => {
-    return <NavLink to={`/?tag=${props.slug}`} className="tag-cloud-link">{props.name}</NavLink>
+    return <NavLink to={`/?tag=${props.name}`} className="tag-cloud-link">{props.name}</NavLink>
 };
 
 
