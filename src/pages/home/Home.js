@@ -65,7 +65,7 @@ export default function Home () {
     const [noPosts, noPostsUpdate] = useState(false);
 
     if (fetchBlogs) {
-        fetchAllPosts();
+        fetchAllPosts({}, () => noPostsUpdate(true));
         updateFetch(false);
     }
 
