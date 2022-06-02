@@ -78,8 +78,9 @@ export default function Home () {
     }
 
     const updatePosts = () => {
-        blogsUpdate(store.getAllPosts());
-        noPostsUpdate(!Boolean(store.getAllPosts().length));
+        const _tempBlogs = store.getAllPosts();
+        blogsUpdate(_tempBlogs);
+        noPostsUpdate(!Boolean(_tempBlogs.length));
     };
 
     useEffect(() => {
