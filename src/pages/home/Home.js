@@ -81,6 +81,11 @@ export default function Home () {
         return () => store.removeListener('change_to_posts', updatePosts);
     });
 
+    // fetch posts when URL changes
+    useEffect(() => {
+        updateFetch(true);
+    }, [location]);
+
     const mappedBlogs = blogs.map((blog, key) => <BlogEntry key={key} id={key} {...blog}/>);
 
     return (
