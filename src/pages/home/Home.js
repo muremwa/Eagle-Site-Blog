@@ -6,7 +6,7 @@ import {fetchAllPosts} from "../../actions/blogActions";
 
 // single blog entry
 function BlogEntry (props) {
-    const { featureImageUrl, date, author, commentCount, title, slug } = props;
+    const { featureImageUrl, date, author, commentCount, title, slug, easyDate } = props;
     const linkToBlog = `posts/${slug}/`;
     const featureImgLinkStyle = {
         backgroundImage: `url(${featureImageUrl})`
@@ -26,7 +26,7 @@ function BlogEntry (props) {
 
                 <div className="text p-4 d-block">
                     <div className="meta mb-3">
-                        <div><NavLink to={`/?on=${date}`}>{date} </NavLink></div>
+                        <div><NavLink to={`/?on=${easyDate}`}>{date} </NavLink></div>
                         <div><NavLink to={`/?author=${author.name}`}>{author.name} </NavLink></div>
                         <div><span className="meta-chat"><span className="icon-chat"/> {commentCount}</span></div>
                     </div>
@@ -41,8 +41,15 @@ function BlogEntry (props) {
 
 function NoPosts (props) {
     const { loading } = props;
+    const noPostsDiv = useRef(null);
+
+    useEffect(() => {
+        noPostsDiv.current.classList.add('fadeInUp');
+        noPostsDiv.current.classList.add('ftco-animated');
+    });
+
     return (
-        <div className="col-md-12 text-center heading-section ftco-animate">
+        <div className="col-md-12 text-center heading-section ftco-animate" ref={noPostsDiv}>
             <span>coming soon</span>
             <h2>
                 {loading? 'loading posts...': 'No posts for now'}
@@ -72,7 +79,7 @@ export default function Home () {
 
     const updatePosts = () => {
         blogsUpdate(store.getAllPosts());
-        noPostsUpdate(!Boolean(blogs.length));
+        noPostsUpdate(!Boolean(store.getAllPosts().length));
     };
 
     useEffect(() => {
