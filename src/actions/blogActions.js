@@ -333,7 +333,7 @@ export function fetchBlog (slug) {
 }
 
 
-export function fetchAllPosts (params = {}, errorLoading = () => {}) {
+export function fetchAllPosts (params = '', errorLoading = () => {}) {
     const storeFetchedPosts = (posts) => {
         dispatcher.dispatch({
             type: 'FETCHED_BLOGS',
@@ -342,8 +342,21 @@ export function fetchAllPosts (params = {}, errorLoading = () => {}) {
         })
     };
 
+    // clean url search
+    const searchParams = new URLSearchParams(params);
+
+    if (params) {
+        const allowedKeys = ['on', 'before', 'after', 'tag', 'author'];
+        searchParams.forEach((_, key) => {
+            if (!allowedKeys.includes(key)) {
+                searchParams.delete(key)
+            }
+        });
+    }
+    const urlSearchParams = params? `?${searchParams.toString()}`: '';
+
     const fetchPostsOptions = {
-        url: `/blog/api/posts/`,
+        url: `/blog/api/posts/${urlSearchParams}`,
         responseType: 'json',
         error: errorLoading,
         success: (payload) => {

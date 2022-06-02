@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import {NavLink, useLocation} from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import store from "../../store/BlogStore";
 import {fetchAllPosts} from "../../actions/blogActions";
@@ -63,9 +63,10 @@ export default function Home () {
     const [blogs, blogsUpdate] = useState(store.getAllPosts());
     const [fetchBlogs, updateFetch] = useState(true);
     const [noPosts, noPostsUpdate] = useState(false);
+    const location = useLocation();
 
     if (fetchBlogs) {
-        fetchAllPosts({}, () => noPostsUpdate(true));
+        fetchAllPosts(location.search, () => noPostsUpdate(true));
         updateFetch(false);
     }
 
