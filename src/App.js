@@ -39,7 +39,7 @@ function App() {
         <BrowserRouter>
                 <Title {...{defaultTitle}} />
                 <Routes>
-                    <Route path='/' element={<Home {...{titleChanger}} />} />
+                    <Route path='/' element={<Home {...{titleChanger, defaultTitle}} />} />
                     <Route path='/posts/:blogSlug/' element={<Post {...{titleChanger}} />}/>
                     <Route path='*' element={<Error404/>} />
                 </Routes>

@@ -40,7 +40,7 @@ function BlogEntry (props) {
 
 
 function NoPosts (props) {
-    const { loading } = props;
+    const { loading, title } = props;
     const noPostsDiv = useRef(null);
 
     useEffect(() => {
@@ -52,12 +52,7 @@ function NoPosts (props) {
         <div className="col-md-12 text-center heading-section ftco-animate" ref={noPostsDiv}>
             <span>coming soon</span>
             <h2>
-                {loading? 'loading posts...': 'No posts for now'}
-                {/*{% if author %}by {{author}}{% endif %}*/}
-                {/*{% if tag %}tagged {{tag}}{% endif %}*/}
-                {/*{% if on %}dated {{on}}{% endif %}*/}
-                {/*{% if before %}posted before {{before}}{% endif %}*/}
-                {/*{% if after %}posted after {{after}}{% endif %}*/}
+                {loading? 'loading posts...': title.miniTitle.replace('All Posts', 'No posts for now')}
             </h2>
         </div>
     )
@@ -65,7 +60,7 @@ function NoPosts (props) {
 
 
 // all blogs/blog index
-export default function Home ({titleChanger}) {
+export default function Home ({titleChanger, defaultTitle}) {
     document.title = 'Muremwa | Blog - All Posts';
     const [blogs, blogsUpdate] = useState(store.getAllPosts());
     const [fetchBlogs, updateFetch] = useState(true);
@@ -124,7 +119,7 @@ export default function Home ({titleChanger}) {
 
     return (
         <div className="row">
-            {mappedBlogs.length? mappedBlogs: <NoPosts loading={!noPosts}/>}
+            {mappedBlogs.length? mappedBlogs: <NoPosts loading={!noPosts} title={defaultTitle}/>}
         </div>
     )
 }
