@@ -8,8 +8,7 @@ import Post from './pages/posts/Post';
 import './App.css';
 
 
-function Title () {
-    const [defaultTitle, titleChanger] = useState("Read my blog");
+function Title ({defaultTitle}) {
     const location = useLocation();
     const top = useRef(null);
 
@@ -21,20 +20,27 @@ function Title () {
         <div className="row justify-content-center mb-5 pb-5" ref={top}>
             <div className="col-md-7 text-center heading-section ftco-animate">
                 <span><NavLink to='/'>Blog</NavLink></span>
-                <h2>{defaultTitle}</h2>
-                <span>All posts</span>
+                <h2>{defaultTitle.mainTitle}</h2>
+                <span>{defaultTitle.miniTitle}</span>
             </div>
         </div>
     );
 }
 
 function App() {
+    const [defaultTitle, changeTitle] = useState({
+        mainTitle: "Read my blog",
+        miniTitle: "All posts"
+    });
+
+    const titleChanger = (titleObj) => changeTitle(titleObj);
+
     return (
         <BrowserRouter>
-                <Title />
+                <Title {...{defaultTitle}} />
                 <Routes>
-                    <Route path='/' element={<Home />} />
-                    <Route path='/posts/:blogSlug/' element={<Post />}/>
+                    <Route path='/' element={<Home {...{titleChanger}} />} />
+                    <Route path='/posts/:blogSlug/' element={<Post {...{titleChanger}} />}/>
                     <Route path='*' element={<Error404/>} />
                 </Routes>
         </BrowserRouter>

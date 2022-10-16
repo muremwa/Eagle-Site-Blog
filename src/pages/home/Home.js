@@ -65,12 +65,37 @@ function NoPosts (props) {
 
 
 // all blogs/blog index
-export default function Home () {
+export default function Home ({titleChanger}) {
     document.title = 'Muremwa | Blog - All Posts';
     const [blogs, blogsUpdate] = useState(store.getAllPosts());
     const [fetchBlogs, updateFetch] = useState(true);
     const [noPosts, noPostsUpdate] = useState(false);
     const location = useLocation();
+
+    const homeTitle = () => {
+        const title = "All Posts"
+        const searchParams = new URLSearchParams(location.search);
+
+        const viceSuffixes = {
+            author: searchParams.has('author')? `by ${searchParams.get('author')}`: null,
+            tag: searchParams.has('tag')? `tagged ${searchParams.get('tag')}`: null,
+            on: searchParams.has('on')? `dated ${searchParams.get('on')}`: null
+        }
+
+        if (!viceSuffixes.on) {
+            const range = searchParams.has('before') && searchParams.has('after');
+            viceSuffixes['before'] = searchParams.has('before')? `posted ${range? 'between': 'before'} ${searchParams.get('before')}`: null;
+            viceSuffixes['after'] = searchParams.has('after')? `${range? 'and': 'posted after'} ${searchParams.get('after')}`: null;
+        }
+
+        const titleSuffix = Object.values(viceSuffixes).join(' ')
+
+        titleChanger({
+            mainTitle: "Read my blog",
+            miniTitle: `${title} ${titleSuffix}`
+        })
+    }
+
 
     if (fetchBlogs) {
         fetchAllPosts(location.search, () => noPostsUpdate(true));
@@ -78,6 +103,7 @@ export default function Home () {
     }
 
     const updatePosts = () => {
+        homeTitle();
         const _tempBlogs = store.getAllPosts();
         blogsUpdate(_tempBlogs);
         noPostsUpdate(!Boolean(_tempBlogs.length));
