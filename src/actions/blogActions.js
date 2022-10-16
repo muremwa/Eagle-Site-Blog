@@ -328,46 +328,52 @@ function cleaner (obj = {}) {
     return newObj;
 }
 
-export function fetchBlog (slug) {
-
-}
-
-
-export function fetchAllPosts (params = '', errorLoading = () => {}) {
-    const storeFetchedPosts = (posts) => {
-        dispatcher.dispatch({
-            type: 'FETCHED_BLOGS',
-            load: Array.isArray(posts)? posts.map(cleaner): [],
-            args: params
-        })
-    };
-
+export async function getPosts(params = '') {
     // clean url search
     const searchParams = new URLSearchParams(params);
 
     if (params) {
         const allowedKeys = ['on', 'before', 'after', 'tag', 'author'];
+
         searchParams.forEach((_, key) => {
             if (!allowedKeys.includes(key)) {
                 searchParams.delete(key)
             }
         });
+
+        if (searchParams.has('on') && (searchParams.has('before') || searchParams.has('after'))) {
+            searchParams.delete('before');
+            searchParams.delete('after');
+        }
     }
+
     const urlSearchParams = params? `?${searchParams.toString()}`: '';
 
-    const fetchPostsOptions = {
-        url: `/blog/api/posts/${urlSearchParams}`,
-        responseType: 'json',
-        error: errorLoading,
-        success: (payload) => {
-            if (payload.response) {
-                storeFetchedPosts(payload.response)
-            } else {
-                errorLoading();
-            }
-        }
-    };
+    const res = await fetch(`/blog/api/posts/${urlSearchParams}`, {
+        method: "GET"
+    });
 
-    // fetch posts finally
-    ajax.get(fetchPostsOptions);
+    const blogs = await res.json();
+
+    return blogs.map(cleaner);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

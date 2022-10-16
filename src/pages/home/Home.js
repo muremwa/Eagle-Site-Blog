@@ -1,7 +1,7 @@
-import {NavLink, useLocation} from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
-import store from "../../store/BlogStore";
-import {fetchAllPosts} from "../../actions/blogActions";
+import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useQuery } from 'react-query';
+import { getPosts } from "../../actions/blogActions";
 
 
 // single blog entry
@@ -38,9 +38,8 @@ function BlogEntry (props) {
     )
 }
 
-
 function NoPosts (props) {
-    const { loading, title } = props;
+    const { loading, title, error } = props;
     const noPostsDiv = useRef(null);
 
     useEffect(() => {
@@ -50,9 +49,10 @@ function NoPosts (props) {
 
     return (
         <div className="col-md-12 text-center heading-section ftco-animate" ref={noPostsDiv}>
-            <span>coming soon</span>
             <h2>
-                {loading? 'loading posts...': title.miniTitle.replace('All Posts', 'No posts for now')}
+                {
+                    error? 'An error occurred loading posts': loading? 'loading posts...': title.miniTitle.replace('All Posts', 'No posts for now')
+                }
             </h2>
         </div>
     )
@@ -62,9 +62,6 @@ function NoPosts (props) {
 // all blogs/blog index
 export default function Home ({titleChanger, defaultTitle}) {
     document.title = 'Muremwa | Blog - All Posts';
-    const [blogs, blogsUpdate] = useState(store.getAllPosts());
-    const [fetchBlogs, updateFetch] = useState(true);
-    const [noPosts, noPostsUpdate] = useState(false);
     const location = useLocation();
 
     const homeTitle = () => {
@@ -91,35 +88,25 @@ export default function Home ({titleChanger, defaultTitle}) {
         })
     }
 
+    const { status, data, refetch } = useQuery('posts', () => getPosts(location.search));
 
-    if (fetchBlogs) {
-        fetchAllPosts(location.search, () => noPostsUpdate(true));
-        updateFetch(false);
-    }
-
-    const updatePosts = () => {
-        const _tempBlogs = store.getAllPosts();
-        blogsUpdate(_tempBlogs);
-        noPostsUpdate(!Boolean(_tempBlogs.length));
-    };
-
-    useEffect(() => {
-        store.on('change_to_posts', updatePosts);
-
-        return () => store.removeListener('change_to_posts', updatePosts);
-    });
-
-    // fetch posts when URL changes
     useEffect(() => {
         homeTitle();
-        updateFetch(true);
+        refetch();
     }, [location]);
 
-    const mappedBlogs = blogs.map((blog, key) => <BlogEntry key={key} id={key} {...blog}/>);
+    if (status === 'loading') {
+        return <NoPosts loading={true} title={defaultTitle} />
+    } else if (status === 'error') {
+        return <NoPosts loading={false} title={defaultTitle} error={true} />
+    }
+
+    const blogs = Array.isArray(data)? data: [];
+    const mappedBlogs = blogs.map((blog, key) => <BlogEntry {...{id: key, key, ...blog}} />)
 
     return (
         <div className="row">
-            {mappedBlogs.length? mappedBlogs: <NoPosts loading={!noPosts} title={defaultTitle}/>}
+            {mappedBlogs.length? mappedBlogs: <NoPosts loading={false} title={defaultTitle}/>}
         </div>
     )
 }
