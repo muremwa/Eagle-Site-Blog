@@ -5,8 +5,6 @@ import Home from './pages/home/Home';
 import Error404 from './pages/home/Error404';
 import Post from './pages/posts/Post';
 
-import './App.css';
-
 
 function Title ({defaultTitle}) {
     const location = useLocation();
