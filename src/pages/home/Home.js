@@ -88,7 +88,7 @@ export default function Home ({titleChanger, defaultTitle}) {
         })
     }
 
-    const { status, data, refetch } = useQuery('posts', () => getPosts(location.search));
+    const { status, data, refetch } = useQuery(['posts', location.search], () => getPosts(location.search));
 
     useEffect(() => {
         homeTitle();
