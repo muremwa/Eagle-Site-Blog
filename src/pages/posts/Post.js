@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from  'rehype-raw';
+import { useQuery } from "react-query";
 
 import '../../style/post.css';
-import {CommentForm, Comments} from "./Comments";
-import store from "../../store/BlogStore";
+import { CommentForm, Comments } from "./Comments";
 import Error404 from "../home/Error404";
-import {fetchBlog} from "../../actions/blogActions";
+import { getSinglePost } from "../../actions/blogActions";
 
 
 const Tag = (props) => {
@@ -70,36 +70,19 @@ function Post ({ post, titleChanger }) {
     )
 }
 
-export default function PostMain ({titleChanger}) {
+export default function PostMain ({ titleChanger }) {
     const { blogSlug } = useParams();
-    const [ post, postUpdater ] = useState(store.getPost(blogSlug));
-    const [fetch, fetchUpdater] = useState(true);
-    const [postNotFound, postNotFoundUpdate] = useState(false);
+    const { status, data } = useQuery(['posts', blogSlug], () => getSinglePost(blogSlug));
 
-    const loadNewPost = () => {
-        postUpdater(store.getPost(blogSlug));
-        postNotFoundUpdate(!Boolean(post));
-    };
-
-    useEffect(() => {
-        store.on(`change_to_${blogSlug}`, loadNewPost);
-
-        return () => store.removeListener(`change_to_${blogSlug}`, loadNewPost);
-    });
-
-    // if post doesn't exist and fetch hasn't happened
-    if (!post && fetch) {
-        fetchBlog(blogSlug);
-        fetchUpdater(false);
-    }
-
-    if (post) {
-        return <Post {...{post, titleChanger}} />
+    if (data) {
+        return <Post {...{post: data, titleChanger}} />
     } else {
-        if (postNotFound) {
+        if (status === 'success') {
             return <Error404 item={'blog post'}/>
-        } else {
+        } else if (status === 'loading') {
             return <h2 className="text-center">Loading post...</h2>
+        } else if (status === 'error') {
+            return <h2 className="text-center">An error occurred loading post</h2>
         }
     }
 }

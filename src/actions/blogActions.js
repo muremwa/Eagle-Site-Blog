@@ -349,9 +349,7 @@ export async function getPosts(params = '') {
 
     const urlSearchParams = params? `?${searchParams.toString()}`: '';
 
-    const res = await fetch(`/blog/api/posts/${urlSearchParams}`, {
-        method: "GET"
-    });
+    const res = await fetch(`/blog/api/posts/${urlSearchParams}`, {method: "GET"});
 
     const blogs = await res.json();
 
@@ -359,21 +357,7 @@ export async function getPosts(params = '') {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export async function getSinglePost (slug) {
+    const res = await fetch(`/blog/api/posts/${slug}`, {method: "GET"});
+    return cleaner(await res.json());
+}
