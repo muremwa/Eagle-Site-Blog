@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from  'rehype-raw';
@@ -20,6 +20,8 @@ const FeatureImage = ({title, url}) => {
 
 
 function Post ({ post, titleChanger }) {
+    const commentSection = useRef(null);
+    const errorSection = useRef(null);
     const tags = post.tags.map((_tag, i) => <Tag key={i} {..._tag} />);
     document.title = `Muremwa | Post - ${post.title}`;
 
@@ -58,10 +60,10 @@ function Post ({ post, titleChanger }) {
                         </div>
 
                         {/* Comments */}
-                        <Comments comments={post.comments} title={post.title} />
+                        <Comments err={errorSection} top={commentSection} comments={post.comments} title={post.title} />
 
                         {/* Commenting form */}
-                        <CommentForm/>
+                        <CommentForm err={errorSection} top={commentSection}/>
 
                     </div>
                 </div>

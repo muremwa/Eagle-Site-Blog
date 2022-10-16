@@ -5,13 +5,17 @@ import reportWebVitals from './reportWebVitals';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+const root = document.getElementById('root');
+
+export const csrfToken = root.dataset.csrfToken;
+
 ReactDOM.render(
     <React.StrictMode>
         <QueryClientProvider client={new QueryClient()}>
             <App />
         </QueryClientProvider>
     </React.StrictMode>,
-    document.getElementById('root')
+    root
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -143,3 +143,18 @@ export async function getSinglePost (slug) {
     const res = await fetch(`/blog/api/posts/${slug}`, {method: "GET"});
     return cleaner(await res.json());
 }
+
+
+export async function postComment (slug, formData) {
+    const res = await fetch(`/blog/api/posts/${slug}/new-comment/`, {
+        method: "POST",
+        body: formData
+    });
+    const resJ = cleaner(await res.json());
+
+    if (!resJ.id) {
+        throw new Error('Could not comment')
+    }
+
+    return resJ
+}

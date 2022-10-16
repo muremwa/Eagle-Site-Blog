@@ -1,3 +1,9 @@
+import { useParams } from 'react-router-dom';
+import { useMutation, useQueryClient } from 'react-query';
+import { postComment } from '../../actions/blogActions';
+import { csrfToken } from '../../index';
+
+
 function Comment (props) {
     const { id, name, date, message } = props;
     const commentId = `comment-${id}`;
@@ -26,27 +32,72 @@ function NoComments ({ title }) {
 }
 
 export function Comments (props) {
-    const { title, comments } = props;
+    const { title, comments, top, err } = props;
     const commentsTitle = comments.length > 0? ` (${comments.length})`: '';
     const content = comments.length > 0? <CommentsList comments={comments} />: <NoComments title={title} />;
 
+    const errStyle = {
+        border: '1px solid #8c8c8c',
+        borderRadius: '10px',
+        height: '2em',
+        textAlign: 'center',
+        color: 'red',
+        display: 'none'
+    }
+
     return (
-        <div className="pt-5 mt-5">
+        <div ref={top} className="pt-5 mt-5">
             <h3 className="mb-5">Comments{commentsTitle}</h3>
+
+            <div className="error" ref={err} style={errStyle}>
+                Could not post comment, please refresh the page and try again
+            </div>
+
             {content}
         </div>
     )
 }
 
 
-export function CommentForm () {
-    const formSubmitHandling = (event_) => event_.preventDefault();
+export function CommentForm ({ top, err }) {
+    const { blogSlug } = useParams();
+    const queryClient = useQueryClient();
+    let form;
+
+    const commentOnPost = useMutation((comment) => {
+        return postComment(blogSlug, comment);
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['posts', blogSlug]);
+            [...form].forEach((el) => {
+                el.disabled = false;
+                el.value = '';
+            });
+        },
+        onSettled: () => {
+            top.current.scrollIntoView();
+        },
+        onError: () => {
+            err.current.style.display = 'block'
+        },
+        retry: 0
+    });
+
+    const formSubmitHandling = (event_) => {
+        event_.preventDefault();
+        form = event_.target;
+        const fD = new FormData(form);
+        [...form].forEach((el) => el.disabled = true);
+        commentOnPost.mutate(fD);
+    };
 
     return (
         <div className="comment-form-wrap pt-5">
             <h3 className="mb-5">Leave a comment</h3>
 
             <form method="post" onSubmit={formSubmitHandling}>
+                <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken}/>
+
                 <div className="form-group">
                     <label htmlFor="name">Name *</label>
                     <input type="text" className="form-control" id="name" name="name" required />
