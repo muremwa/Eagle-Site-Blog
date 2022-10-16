@@ -98,7 +98,6 @@ export default function Home ({titleChanger, defaultTitle}) {
     }
 
     const updatePosts = () => {
-        homeTitle();
         const _tempBlogs = store.getAllPosts();
         blogsUpdate(_tempBlogs);
         noPostsUpdate(!Boolean(_tempBlogs.length));
@@ -112,6 +111,7 @@ export default function Home ({titleChanger, defaultTitle}) {
 
     // fetch posts when URL changes
     useEffect(() => {
+        homeTitle();
         updateFetch(true);
     }, [location]);
 
