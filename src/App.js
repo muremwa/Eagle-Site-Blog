@@ -21,7 +21,7 @@ function Title ({defaultTitle}) {
             <div className="col-md-7 text-center heading-section ftco-animate">
                 <span><NavLink to='/'>Blog</NavLink></span>
                 <h2>{defaultTitle.mainTitle}</h2>
-                <span>{defaultTitle.miniTitle}</span>
+                <span dangerouslySetInnerHTML={{__html: defaultTitle.miniTitle}} />
             </div>
         </div>
     );

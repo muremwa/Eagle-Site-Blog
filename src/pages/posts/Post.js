@@ -19,9 +19,16 @@ const FeatureImage = ({title, url}) => {
 }
 
 
-function Post ({ post }) {
+function Post ({ post, titleChanger }) {
     const tags = post.tags.map((_tag, i) => <Tag key={i} {..._tag} />);
     document.title = `Muremwa | Post - ${post.title}`;
+
+    useEffect (() => {
+        titleChanger({
+            mainTitle: post.title,
+            miniTitle: `<small><i>by</i></small> ${post.author.name}`
+        });
+    }, [post]);
 
     return (
         <section id="post" className="ftco-section">
@@ -63,7 +70,7 @@ function Post ({ post }) {
     )
 }
 
-export default function PostMain () {
+export default function PostMain ({titleChanger}) {
     const { blogSlug } = useParams();
     const [ post, postUpdater ] = useState(store.getPost(blogSlug));
     const [fetch, fetchUpdater] = useState(true);
@@ -87,7 +94,7 @@ export default function PostMain () {
     }
 
     if (post) {
-        return <Post post={post} />
+        return <Post {...{post, titleChanger}} />
     } else {
         if (postNotFound) {
             return <Error404 item={'blog post'}/>
