@@ -1,6 +1,7 @@
-import {useEffect, useState} from "react";
-import {NavLink, useParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useParams } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from  'rehype-raw';
 
 import '../../style/post.css';
 import {CommentForm, Comments} from "./Comments";
@@ -28,7 +29,7 @@ function Post ({ post }) {
 
                         {/* content */}
                         <div className="post-content" data-post-content="{{ post.content }}">
-                            <ReactMarkdown children={post.content} />
+                            <ReactMarkdown children={post.content} rehypePlugins={[rehypeRaw]} />
                         </div>
 
                         {/* Tags */}
