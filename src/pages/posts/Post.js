@@ -30,7 +30,7 @@ function Post ({ post, titleChanger }) {
             mainTitle: post.title,
             miniTitle: `<small><i>by</i></small> ${post.author.name}`
         });
-    }, [post]);
+    }, [post, titleChanger]);
 
     return (
         <section id="post" className="ftco-section">
@@ -51,7 +51,7 @@ function Post ({ post, titleChanger }) {
                         {/* About author */}
                         <div className="about-author d-flex pt-5">
                             <div className="bio align-self-md-center mr-4">
-                                <img src={post.author.image} alt="Image placeholder" className="img-fluid mb-4" />
+                                <img src={post.author.image} alt={`Author for ${post.author.name}`} className="img-fluid mb-4" />
                             </div>
                             <div className="desc align-self-md-center">
                                 <h3>About The Author</h3>

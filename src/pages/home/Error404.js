@@ -1,6 +1,3 @@
-import {useEffect} from "react";
-
-
 export default function Error404 ({ item }) {
     const st = {
         height: '40vh'

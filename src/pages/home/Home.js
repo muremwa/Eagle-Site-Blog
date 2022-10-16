@@ -64,36 +64,36 @@ export default function Home ({titleChanger, defaultTitle}) {
     document.title = 'Muremwa | Blog - All Posts';
     const location = useLocation();
 
-    const homeTitle = () => {
-        const title = "All Posts"
-        const searchParams = new URLSearchParams(location.search);
-
-        const viceSuffixes = {
-            author: searchParams.has('author')? `by ${searchParams.get('author')}`: null,
-            tag: searchParams.has('tag')? `tagged ${searchParams.get('tag')}`: null,
-            on: searchParams.has('on')? `dated ${searchParams.get('on')}`: null
-        }
-
-        if (!viceSuffixes.on) {
-            const range = searchParams.has('before') && searchParams.has('after');
-            viceSuffixes['before'] = searchParams.has('before')? `posted ${range? 'between': 'before'} ${searchParams.get('before')}`: null;
-            viceSuffixes['after'] = searchParams.has('after')? `${range? 'and': 'posted after'} ${searchParams.get('after')}`: null;
-        }
-
-        const titleSuffix = Object.values(viceSuffixes).join(' ')
-
-        titleChanger({
-            mainTitle: "Read my blog",
-            miniTitle: `${title} ${titleSuffix}`
-        })
-    }
-
     const { status, data, refetch } = useQuery(['posts', location.search], () => getPosts(location.search));
 
     useEffect(() => {
+        const homeTitle = () => {
+            const title = "All Posts"
+            const searchParams = new URLSearchParams(location.search);
+
+            const viceSuffixes = {
+                author: searchParams.has('author')? `by ${searchParams.get('author')}`: null,
+                tag: searchParams.has('tag')? `tagged ${searchParams.get('tag')}`: null,
+                on: searchParams.has('on')? `dated ${searchParams.get('on')}`: null
+            }
+
+            if (!viceSuffixes.on) {
+                const range = searchParams.has('before') && searchParams.has('after');
+                viceSuffixes['before'] = searchParams.has('before')? `posted ${range? 'between': 'before'} ${searchParams.get('before')}`: null;
+                viceSuffixes['after'] = searchParams.has('after')? `${range? 'and': 'posted after'} ${searchParams.get('after')}`: null;
+            }
+
+            const titleSuffix = Object.values(viceSuffixes).join(' ')
+
+            titleChanger({
+                mainTitle: "Read my blog",
+                miniTitle: `${title} ${titleSuffix}`
+            })
+        }
+
         homeTitle();
         refetch();
-    }, [location]);
+    }, [location, titleChanger, refetch]);
 
     if (status === 'loading') {
         return <NoPosts loading={true} title={defaultTitle} />
