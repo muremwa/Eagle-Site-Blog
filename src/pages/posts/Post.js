@@ -14,6 +14,10 @@ const Tag = (props) => {
     return <NavLink to={`/?tag=${props.name}`} className="tag-cloud-link">{props.name}</NavLink>
 };
 
+const FeatureImage = ({title, url}) => {
+    return <img alt={`Feature for ${title}`} className="block-6" src={url}/>
+}
+
 
 function Post ({ post }) {
     const tags = post.tags.map((_tag, i) => <Tag key={i} {..._tag} />);
@@ -25,7 +29,7 @@ function Post ({ post }) {
                 <div className="row d-flex justify-content-center">
                     <div className="col-md-8">
                         {/* Feature image */}
-                        <img alt={`Feature for ${post.title}`} className="block-6" src={post.featureImageUrl}/>
+                        {post.noFeatureImage? void 0: <FeatureImage title={post.title} url={post.featureImageUrl} />}
 
                         {/* content */}
                         <div className="post-content" data-post-content="{{ post.content }}">
