@@ -30,7 +30,7 @@ function Post ({ post, titleChanger }) {
             mainTitle: post.title,
             miniTitle: `<small><i>by</i></small> ${post.author.name}`
         });
-    }, [post, titleChanger]);
+    }, [post]);
 
     return (
         <section id="post" className="ftco-section">

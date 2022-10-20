@@ -34,7 +34,7 @@ function App() {
     const titleChanger = (titleObj) => changeTitle(titleObj);
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename='/blog/open/'>
                 <Title {...{defaultTitle}} />
                 <Routes>
                     <Route path='/' element={<Home {...{titleChanger, defaultTitle}} />} />

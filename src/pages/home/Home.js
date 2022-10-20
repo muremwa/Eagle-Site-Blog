@@ -93,7 +93,7 @@ export default function Home ({titleChanger, defaultTitle}) {
 
         homeTitle();
         refetch();
-    }, [location, titleChanger, refetch]);
+        }, [location]);
 
     if (status === 'loading') {
         return <NoPosts loading={true} title={defaultTitle} />
